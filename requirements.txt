@@ -30,3 +30,5 @@ wikipedia
 SibylSystem
 pytimeparse
 lxml
+pycryptodome
+base58
