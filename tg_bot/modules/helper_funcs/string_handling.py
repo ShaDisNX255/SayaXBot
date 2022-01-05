@@ -137,7 +137,7 @@ def markdown_parser(
             # handle markdown/html links
             elif ent.type == "text_link":
                 res += _selective_escape(txt[prev:start]) + "[{}]({})".format(
-                    ent_text, ent.url
+                    _selective_escape(ent_text), ent.url
                 )
 
             end += 1
