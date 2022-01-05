@@ -20,7 +20,7 @@ class AdminPerms(Enum):
 
 class UserClass(Enum):
     ADMIN = SUDO_USERS
-    MOD = MOD_USERS
+    MOD = MOD_USERS + SUDO_USERS
 
 class ChatStatus(Enum):
     CREATOR = "creator"
