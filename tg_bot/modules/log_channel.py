@@ -1,6 +1,6 @@
 from datetime import datetime
 from functools import wraps
-from tg_bot import spamcheck
+from tg_bot import OWNER_ID, spamcheck
 
 from telegram.ext import CallbackContext
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
@@ -74,7 +74,7 @@ if is_module_loaded(FILENAME):
                     else:
                         cid = str(chat.id).replace("-100", '')
                         result += f'\n<b>Link:</b> <a href="https://t.me/c/{cid}/{message.message_id}">click here</a>'
-                        log_chat = str(GBAN_LOGS)
+                log_chat = GBAN_LOGS or OWNER_ID
                 if log_chat:
                     send_log(context, log_chat, chat.id, result)
 
