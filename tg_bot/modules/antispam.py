@@ -36,7 +36,7 @@ from telegram.utils.helpers import mention_html
 from tg_bot.modules.helper_funcs.chat_status import dev_plus
 from spamwatch.errors import SpamWatchError, Error, UnauthorizedError, NotFoundError, Forbidden, TooManyRequests
 from tg_bot.modules.helper_funcs.decorators import kigcmd, kigmsg
-
+from ..modules.helper_funcs.anonymous import user_admin as u_admin, AdminPerms, resolve_user as res_user, UserClass
 GBAN_ENFORCE_GROUP = -1
 
 GBAN_ERRORS = {
@@ -526,45 +526,43 @@ def enforce_gban(update: Update, context: CallbackContext):
 
 @kigcmd(command=["antispam", "gbanstat"])
 @spamcheck
-@user_admin
+@u_admin(UserClass.ADMIN, AdminPerms.CAN_CHANGE_INFO)
 @loggable
 def gbanstat(update: Update, context: CallbackContext) -> str:
     args = context.args
+    u = update.effective_user
+    message = update.effective_message
+    chat = update.effective_chat
+    user = res_user(u, message.message_id, chat)
     if len(args) > 0:
-        user = update.effective_user
-        message = update.effective_message
-        chat = update.effective_chat
-        if u_can_change_info(chat, user):
-            if args[0].lower() in ["on", "yes"]:
-                sql.enable_gbans(update.effective_chat.id)
-                update.effective_message.reply_text(
-                    "I've enabled gbans in this group. This will help protect you "
-                    "from spammers, unsavoury characters, and the biggest trolls."
-                )
-                logmsg = (
-                    f"<b>{html.escape(chat.title)}:</b>\n"
-                    f"#ANTISPAM_TOGGLED\n"
-                    f"Antispam has been <b>enabled</b>\n"
-                    f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-                )
-                return logmsg
-            elif args[0].lower() in ["off", "no"]:
-                sql.disable_gbans(update.effective_chat.id)
-                update.effective_message.reply_text(
-                    "I've disabled gbans in this group. GBans wont affect your users "
-                    "anymore. You'll be less protected from any trolls and spammers "
-                    "though!"
-                )
-                logmsg = (
-                    f"<b>{html.escape(chat.title)}:</b>\n"
-                    f"#ANTISPAM_TOGGLED\n"
-                    f"Antispam has been <b>disabled</b>\n"
-                    f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
-                )
-                return logmsg
-        else:
-            message.reply_text("You lack the {} right!".format('can_change_info'.upper()))
-            return ''
+        if args[0].lower() in ["on", "yes"]:
+            sql.enable_gbans(update.effective_chat.id)
+            update.effective_message.reply_text(
+                "I've enabled gbans in this group. This will help protect you "
+                "from spammers, unsavoury characters, and the biggest trolls."
+            )
+            logmsg = (
+                f"<b>{html.escape(chat.title)}:</b>\n"
+                f"#ANTISPAM_TOGGLED\n"
+                f"Antispam has been <b>enabled</b>\n"
+                f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+            )
+            return logmsg
+        elif args[0].lower() in ["off", "no"]:
+            sql.disable_gbans(update.effective_chat.id)
+            update.effective_message.reply_text(
+                "I've disabled gbans in this group. GBans wont affect your users "
+                "anymore. You'll be less protected from any trolls and spammers "
+                "though!"
+            )
+            logmsg = (
+                f"<b>{html.escape(chat.title)}:</b>\n"
+                f"#ANTISPAM_TOGGLED\n"
+                f"Antispam has been <b>disabled</b>\n"
+                f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
+            )
+            return logmsg
+
     else:
         update.effective_message.reply_text(
             "Give me some arguments to choose a setting! on/off, yes/no!\n\n"
