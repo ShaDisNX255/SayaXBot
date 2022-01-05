@@ -46,7 +46,7 @@ def cannot_ban(user_id, message):
     elif user_id in WHITELIST_USERS:
         message.reply_text("Bring an order from My Devs to fight a Whitelist user.")
     elif user_id in MOD_USERS:
-        message.reply_text("Moderators cannot be banned, report abuse at @TheBotsSupport.")
+        message.reply_text("Moderators cannot be banned, report abuse at @SayaBotSupport.")
     else:
         message.reply_text("This user has immunity and cannot be banned.")
 

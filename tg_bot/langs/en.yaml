@@ -301,7 +301,7 @@ antispam_help: |
 
      Anti-Spam, used by bot devs to ban spammers across all groups. This helps protect
      you and your groups by removing spam flooders as quickly as possible.
-     *Note:* Users can appeal gbans or report spammers at @TheBotsSupport
+     *Note:* Users can appeal gbans or report spammers at @SayaBotSupport
 
      This also integrates @Spamwatch API to remove Spammers as much as possible from your chatroom!
 
@@ -546,7 +546,7 @@ nation_help: |
     *Disclaimer*: The Super Users in the bot are there for troubleshooting, support, banning potential scammers.
     
     Report abuse or ask us more on these at the Support chat.
-    You can visit @TheBotsSupport to query more about these.
+    You can visit @SayaBotSupport to query more about these.
 
 nlp_help: |
 

@@ -116,7 +116,7 @@ def new_fed(update, context):
         x = sql.new_fed(user.id, fed_name, fed_id)
         if not x:
             update.effective_message.reply_text(
-                "Can't federate! Report in @TheBotsSupport if the problem persists."
+                "Can't federate! Report in @SayaBotSupport if the problem persists."
             )
             return
 

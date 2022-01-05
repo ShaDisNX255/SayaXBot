@@ -219,7 +219,7 @@ def get(update, context, notename, show_none=True, no_format=False):
                     sql.rm_note(chat_id, notename)
                 else:
                     message.reply_text(
-                        "This note could not be sent, as it is incorrectly formatted. Ask in @TheBotsSupport if you can't figure out why!"
+                        "This note could not be sent, as it is incorrectly formatted. Ask in @SayaBotSupport if you can't figure out why!"
                     )
                     log.exception(
                         "Could not parse message #%s in chat %s", notename, str(note_chat_id)
