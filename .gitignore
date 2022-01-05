@@ -30,3 +30,5 @@ updates.txt
 *.pytempp
 tg_bot/modules/spamcheck.py
 backups
+logs.txt
+SayaXBot_logs.txt
