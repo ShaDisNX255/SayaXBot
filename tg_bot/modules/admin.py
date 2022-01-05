@@ -15,8 +15,6 @@ from tg_bot.modules.helper_funcs.chat_status import (
     bot_admin,
     can_promote,
     connection_status,
-    ADMIN_CACHE,
-    user_mod,
 )
 
 from tg_bot.modules.helper_funcs.extraction import extract_user, extract_user_and_text
@@ -84,10 +82,6 @@ def fullpromote(update: Update, context: CallbackContext) -> str:
         )
         if title:
             bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
-        try:
-            ADMIN_CACHE.pop(update.effective_chat.id)
-        except KeyError:
-            pass
         bot.sendMessage(
             chat.id,
             f"<b>{user_member.user.first_name or user_id}</b> was promoted by <b>{message.from_user.first_name}</b> with full perms.",
@@ -168,10 +162,6 @@ def promote(update: Update, context: CallbackContext) -> str:
         )
         if title:
             bot.setChatAdministratorCustomTitle(chat.id, user_id, title)
-        try:
-            ADMIN_CACHE.pop(update.effective_chat.id)
-        except KeyError:
-            pass
         bot.sendMessage(
             chat.id,
             f"<b>{user_member.user.first_name or user_id}</b> was promoted by <b>{message.from_user.first_name}</b>.",
@@ -250,11 +240,6 @@ def demote(update: Update, context: CallbackContext) -> str:
             can_manage_voice_chats=False,
             is_anonymous=False,
         )
-
-        try:
-            ADMIN_CACHE.pop(update.effective_chat.id)          
-        except KeyError:
-            pass
         bot.sendMessage(
             chat.id,
             f"<b>{user_member.user.first_name or user_id or None}</b> was demoted by <b>{message.from_user.first_name or None}</b>.",
@@ -275,16 +260,6 @@ def demote(update: Update, context: CallbackContext) -> str:
             f"Could not demote!\n{str(e)}"
         )
         return
- 
-@kigcmd(command="admincache", can_disable=False)
-@user_mod
-def refresh_admin(update, context):
-    try:
-        ADMIN_CACHE.pop(update.effective_chat.id)
-    except KeyError:
-        pass
-    update.effective_message.reply_text("Admins cache is always up to date!")
-
 
 @kigcmd(command="title", can_disable=False)
 @spamcheck

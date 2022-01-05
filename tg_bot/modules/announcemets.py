@@ -5,6 +5,7 @@ from telegram import Update, ParseMode
 from telegram.ext import CallbackContext
 from telegram.chatmemberupdated import ChatMemberUpdated
 from telegram.ext.chatmemberhandler import ChatMemberHandler
+from tg_bot.modules.helper_funcs.chat_status import ADMIN_CACHE
 import tg_bot.modules.sql.log_channel_sql as logsql
 from tg_bot import OWNER_ID, dispatcher
 from tg_bot.modules.log_channel import loggable
@@ -380,5 +381,20 @@ def mychatmemberupdates(update: Update, _: CallbackContext):
             )
             dispatcher.bot.send_message(OWNER_ID, new_group, parse_mode=ParseMode.HTML)
 
+def admincacheupdates(update: Update, _: CallbackContext):
+    oldstat = update.chat_member.old_chat_member.status
+    newstat = update.chat_member.new_chat_member.status
+    if (
+        oldstat == "administrator"
+        and newstat != "administrator"
+        or oldstat != "administrator"
+        and newstat == "administrator"
+    ):
+        try:
+            ADMIN_CACHE.pop(update.effective_chat.id)
+        except KeyError:
+            pass
+
 dispatcher.add_handler(ChatMemberHandler(chatmemberupdates, ChatMemberHandler.CHAT_MEMBER, run_async=True), group=-21)
 dispatcher.add_handler(ChatMemberHandler(mychatmemberupdates, ChatMemberHandler.MY_CHAT_MEMBER, run_async=True), group=-20)
+dispatcher.add_handler(ChatMemberHandler(admincacheupdates, ChatMemberHandler.ANY_CHAT_MEMBER, run_async=True))
