@@ -13,7 +13,6 @@ from telegram import (
 )
 
 from tg_bot import SUDO_USERS, WHITELIST_USERS, dispatcher, spamcheck
-from tg_bot.modules.misc import mention_html_chat
 from tg_bot.modules.sql.approve_sql import is_approved
 from tg_bot.modules.helper_funcs.chat_status import (
     bot_admin,
@@ -47,6 +46,9 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback, kigmsg
 from ..modules.helper_funcs.anonymous import user_admin as u_admin, AdminPerms, resolve_user as res_user, UserClass
 
 FLOOD_GROUP = -5
+from typing import Union
+def mention_html_chat(chat_id: Union[int, str], name: str) -> str:
+    return f'<a href="tg://t.me/{chat_id}">{html.escape(name)}</a>'
 
 # @kigmsg((Filters.all & ~Filters.status_update & Filters.chat_type.groups & ~Filters.update.edited_message & ~Filters.sender_chat), run_async=True, group=FLOOD_GROUP)
 @kigmsg((Filters.all & Filters.chat_type.groups & ~Filters.status_update & ~Filters.update.edited_message & ~Filters.user(136817688)), run_async=True, group=FLOOD_GROUP)
