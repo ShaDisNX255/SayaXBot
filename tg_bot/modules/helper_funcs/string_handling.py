@@ -25,7 +25,7 @@ MATCH_MD = re.compile(
 )
 
 # regex to find []() links -> hyperlinks/buttons
-LINK_REGEX = re.compile(r"(?<!\\)\[.+?\]\((.*?)\)")
+LINK_REGEX = re.compile(r"(?<!\\)\[(.+?)\]\((.*?)\)")
 BTN_URL_REGEX = re.compile(r"(\[([^\[]+?)\]\(buttonurl:(?:/{0,2})(.+?)(:same)?\))")
 
 
@@ -96,18 +96,22 @@ def markdown_parser(
             start -= count
             end -= count
 
-            # URL handling -> do not escape if in [](), escape otherwise.
             if ent.type == "url":
-                if any(
-                    match.start(1) <= start and end <= match.end(1)
-                    for match in LINK_REGEX.finditer(txt)
-                ):
+                for match in LINK_REGEX.finditer(txt):
+                    if match.start(2) <= start and end <= match.end(2) and not match.group(2).startswith("buttonurl"):
+                        print(match.group(2))
+                        mt = match.group(1).center(count)
+                        res += _selective_escape(txt[prev:start - (len(mt) + 3)] + '[{}]({})'.format(_selective_escape(match.group(1)), match.group(2)))
+                        print(res)
+                        end +=1
+                        break
                     continue
-                # else, check the escapes between the prev and last and forcefully escape the url to avoid mangling
                 else:
+                    if txt[start - 10:start] or txt[start - 12:start] in ['buttonurl:', 'buttonurl://']:
+                        continue
                     # TODO: investigate possible offset bug when lots of emoji are present
                     res += _selective_escape(txt[prev:start] or "") + escape_markdown(
-                        ent_text
+                        ent_text, version=2
                     )
 
             # code handling
