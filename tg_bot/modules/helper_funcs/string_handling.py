@@ -11,15 +11,15 @@ from telegram.inline.inlinekeyboardmarkup import InlineKeyboardMarkup
 from telegram.utils.helpers import escape_markdown
 
 # NOTE: the url \ escape may cause double escapes
-# match * (bold) (don't escape if in url)
-# match _ (italics) (don't escape if in url)
-# match ` (code)
+# match * (bold) (don't escape if in url)        # changed
+# match _ (italics) (don't escape if in url)    # changed
+# match ` (code)                               # changed
 # match []() (markdown link)
 # else, escape *, _, `, and [
 MATCH_MD = re.compile(
-    r"\*(.*?)\*|"
-    r"_(.*?)_|"
-    r"`(.*?)`|"
+    # r"\*(.*?)\*|"
+    # r"_(.*?)_|"
+    # r"`(.*?)`|"
     r"(?<!\\)(\[.*?\])(\(.*?\))|"
     r"(?P<esc>[\_\-~`>#=!\|\*\[\]\(\)\+\{\}\.\\])" # https://core.telegram.org/bots/api#markdownv2-style
 )
