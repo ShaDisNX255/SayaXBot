@@ -187,10 +187,10 @@ def button_markdown_parser(
 
 def reply_button_parser(
     txt: str, entities: Dict[MessageEntity, str] = None, offset: int = 0, replymarkup: InlineKeyboardMarkup = None) -> (str, List):
+    markdown_note = markdown_parser(txt, entities, offset)
     buttons = []
-    note_data = ""
     prev = 0
-    note_data = markdown_parser(txt, entities, offset)
+    note_data = ""
     if replymarkup:
         for btn in replymarkup.inline_keyboard:
             buttons.append((btn[0].text, btn[0].url, False))
@@ -198,11 +198,11 @@ def reply_button_parser(
                 for a in btn[1:]:
                     buttons.append((a.text, a.url, True))
                     return note_data, buttons
-    for match in BTN_URL_REGEX.finditer(note_data):
+    for match in BTN_URL_REGEX.finditer(markdown_note):
         # Check if btnurl is escaped
         n_escapes = 0
         to_check = match.start(1) - 1
-        while to_check > 0 and note_data[to_check] == "\\":
+        while to_check > 0 and markdown_note[to_check] == "\\":
             n_escapes += 1
             to_check -= 1
 
@@ -210,12 +210,13 @@ def reply_button_parser(
         if n_escapes % 2 == 0:
             # create a thruple with button label, url, and newline status
             buttons.append((match.group(2), match.group(3), bool(match.group(4))))
-            note_data += note_data[prev : match.start(1)]
+            note_data += markdown_note[prev : match.start(1)]
             prev = match.end(1)
         # if odd, escaped -> move along
         else:
-            note_data += note_data[prev:to_check]
+            note_data += markdown_note[prev:to_check]
             prev = match.start(1) - 1
+    note_data += markdown_note[prev:]
     return note_data, buttons
 
 def escape_invalid_curly_brackets(text: str, valids: List[str]) -> str:
