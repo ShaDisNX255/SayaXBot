@@ -5,7 +5,7 @@ from telegram.message import Message
 from tg_bot import NO_LOAD
 from telegram import MAX_MESSAGE_LENGTH, Bot, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, InlineQueryResultArticle, InputTextMessageContent
 from telegram.error import TelegramError
-from tg_bot.modules.helper_funcs.string_handling import button_markdown_parser, reply_button_parser
+from tg_bot.modules.helper_funcs.string_handling import button_markdown_parser_v2, reply_button_parser_v2
 from tg_bot.modules.helper_funcs.msg_types import Types
 
 
@@ -179,7 +179,7 @@ def get_message_type(msg: Message):
     # determine what the contents of the filter are - text, image, sticker, etc
     if len(args) >= 2:
         offset = len(args[1]) - len(raw_text)  # set correct offset relative to command + notename
-        text, buttons = button_markdown_parser(args[1], entities=msg.parse_entities() or msg.parse_caption_entities(),
+        text, buttons = button_markdown_parser_v2(args[1], entities=msg.parse_entities() or msg.parse_caption_entities(),
                                                offset=offset)
         if buttons:
             data_type = Types.BUTTON_TEXT
@@ -190,7 +190,7 @@ def get_message_type(msg: Message):
         entities = msg.reply_to_message.parse_entities()
         msgtext = msg.reply_to_message.text or msg.reply_to_message.caption
         if len(args) >= 1 and msg.reply_to_message.text:  # not caption, text
-            text, buttons = reply_button_parser(msgtext,
+            text, buttons = reply_button_parser_v2(msgtext,
                                                    entities=entities, replymarkup=msg.reply_to_message.reply_markup)
             if buttons:
                 data_type = Types.BUTTON_TEXT
@@ -203,32 +203,32 @@ def get_message_type(msg: Message):
 
         elif msg.reply_to_message.document:
             content = msg.reply_to_message.document.file_id
-            text, buttons = button_markdown_parser(msgtext, entities=entities)
+            text, buttons = button_markdown_parser_v2(msgtext, entities=entities)
             data_type = Types.DOCUMENT
 
         elif msg.reply_to_message.photo:
             content = msg.reply_to_message.photo[-1].file_id  # last elem = best quality
-            text, buttons = button_markdown_parser(msgtext, entities=entities)
+            text, buttons = button_markdown_parser_v2(msgtext, entities=entities)
             data_type = Types.PHOTO
 
         elif msg.reply_to_message.audio:
             content = msg.reply_to_message.audio.file_id
-            text, buttons = button_markdown_parser(msgtext, entities=entities)
+            text, buttons = button_markdown_parser_v2(msgtext, entities=entities)
             data_type = Types.AUDIO
 
         elif msg.reply_to_message.voice:
             content = msg.reply_to_message.voice.file_id
-            text, buttons = button_markdown_parser(msgtext, entities=entities)
+            text, buttons = button_markdown_parser_v2(msgtext, entities=entities)
             data_type = Types.VOICE
 
         elif msg.reply_to_message.video:
             content = msg.reply_to_message.video.file_id
-            text, buttons = button_markdown_parser(msgtext, entities=entities)
+            text, buttons = button_markdown_parser_v2(msgtext, entities=entities)
             data_type = Types.VIDEO
 
         elif msg.reply_to_message.video_note:
             content = msg.reply_to_message.video_note.file_id
-            text, buttons = button_markdown_parser(msgtext, entities=entities)
+            text, buttons = button_markdown_parser_v2(msgtext, entities=entities)
             data_type = Types.VIDEO_NOTE
 
     return text, data_type, content, buttons
