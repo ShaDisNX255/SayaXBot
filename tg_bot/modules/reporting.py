@@ -167,54 +167,90 @@ def report(update: Update, context: CallbackContext) -> str:
         return msg
     return ""
 
-
 @kigcallback(pattern=r"reported_")
 @user_admin_no_reply
 @bot_admin
 def buttons(update: Update, context: CallbackContext):
     bot = context.bot
     query = update.callback_query
-    splitter = query.data.replace("report_", "").split("=")
-    chatid = update.effective_chat.id
-    print(str(chatid))
+    splitter = query.data.replace("reported_", "").split("=")
+    kyb_no_del = [
+        [
+            InlineKeyboardButton(
+                    "📝 Read the rules", url="t.me/{}?start={}".format(bot.username, splitter[0]),
+                )
+        ],
+    ]
     if splitter[1] == "kick":
         try:
-            bot.kickChatMember(splitter[0], splitter[2])
-            bot.unbanChatMember(splitter[0], splitter[2])
+            bot.ban_chat_member(splitter[0], splitter[2])
+            bot.unban_chat_member(splitter[0], splitter[2])
             query.answer("✅ Succesfully kicked")
             return ""
         except Exception as err:
-            query.answer("🛑 Failed to kick")
-            bot.sendMessage(
-                text=f"Error: {err}",
-                chat_id=chatid,
-                parse_mode=ParseMode.HTML,
-            )
+            query.answer(f"🛑 Failed to kick\n{err}")
     elif splitter[1] == "banned":
         try:
-            bot.kickChatMember(splitter[0], splitter[2])
+            bot.ban_chat_member(splitter[0], splitter[2])
             query.answer("✅  Succesfully Banned")
             return ""
         except Exception as err:
-            bot.sendMessage(
-                text=f"Error: {err}",
-                chat_id=chatid,
-                parse_mode=ParseMode.HTML,
-            )
-            query.answer("🛑 Failed to Ban")
+            query.answer(f"🛑 Failed to Ban\n{err}", show_alert=True)
     elif splitter[1] == "delete":
         try:
             bot.deleteMessage(splitter[0], splitter[3])
             query.answer("✅ Message Deleted")
+            kyb_no_del = [
+                [
+                    InlineKeyboardButton(
+                        "⚠ Kick",
+                        callback_data=f"reported_{splitter[0]}=kick={splitter[2]}",
+                    ),
+                    InlineKeyboardButton(
+                        "⛔️ Ban",
+                        callback_data=f"reported_{splitter[0]}=banned={splitter[2]}",
+                    ),
+                ],
+                [
+                    InlineKeyboardButton(
+                        "❌ Close Panel",
+                        callback_data=f"reported_{splitter[0]}=close={splitter[2]}",
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                            "📝 Read the rules", url="t.me/{}?start={}".format(bot.username, splitter[0]),
+                        )
+                ],
+            ]
+            query.edit_message_reply_markup(
+                InlineKeyboardMarkup(kyb_no_del)
+            )
             return ""
         except Exception as err:
-            bot.sendMessage(
-                text=f"Error: {err}",
-                chat_id=chatid,
-                parse_mode=ParseMode.HTML,
+            query.answer(
+                text=f"🛑 Failed to delete message!\n{err}",
+                show_alert=True
             )
-            query.answer("🛑 Failed to delete message!")
-
+    elif splitter[1] == "close":
+        try:
+            query.answer("✅ Panel Closed!")
+            kyb_no_del = [
+                [
+                    InlineKeyboardButton(
+                            "📝 Read the rules", url="t.me/{}?start={}".format(bot.username, splitter[0]),
+                        )
+                ],
+            ]
+            query.edit_message_reply_markup(
+                InlineKeyboardMarkup(kyb_no_del)
+            )
+            return ""
+        except Exception as err:
+            query.answer(
+                text=f"🛑 Failed to close panel!\n{err}",
+                show_alert=True
+            )
 
 
 from tg_bot.modules.language import gs
