@@ -218,13 +218,44 @@ def get(update, context, notename, show_none=True, no_format=False):
                     )
                     sql.rm_note(chat_id, notename)
                 else:
-                    message.reply_text(
-                        "This note could not be sent, as it is incorrectly formatted. Ask in @SayaBotSupport if you can't figure out why!"
-                    )
-                    log.exception(
-                        "Could not parse message #%s in chat %s", notename, str(note_chat_id)
-                    )
-                    log.warning("Message was: %s", str(note.value))
+                    
+
+                    try: # untill i fix it just use markdown v1 
+                        text = text.replace("\[", "[").replace("\]", "]").replace("\(", "(").replace("\)", ")").replace("\+", "+").replace("\|", "|").replace("\{", "{").replace("\}", "}").replace("\.", ".").replace("\-", "-").replace("\'", "'").replace("\~", "~").replace("\>", ">").replace("\#", "#").replace("\-", "-").replace("\=", "=").replace("\!", "!").replace("\\\\", "\\")
+                        if note.msgtype in (sql.Types.BUTTON_TEXT, sql.Types.TEXT):
+                            bot.send_message(
+                                chat_id,
+                                text,
+                                reply_to_message_id=reply_id,
+                                parse_mode=ParseMode.MARKDOWN,
+                                reply_markup=keyboard,
+                                disable_web_page_preview=bool(preview)
+                            )
+                        elif ENUM_FUNC_MAP[note.msgtype] == dispatcher.bot.send_sticker:
+                            ENUM_FUNC_MAP[note.msgtype](
+                                chat_id,
+                                note.file,
+                                reply_to_message_id=reply_id,
+                                reply_markup=keyboard,
+                            )
+                        else:
+                            ENUM_FUNC_MAP[note.msgtype](
+                                chat_id,
+                                note.file,
+                                caption=text,
+                                reply_to_message_id=reply_id,
+                                parse_mode=ParseMode.MARKDOWN,
+                                reply_markup=keyboard,
+                            )
+                    except:
+                        
+                        message.reply_text(
+                            "This note could not be sent, as it is incorrectly formatted. Ask in @SayaBotSupport if you can't figure out why!"
+                        )
+                        log.exception(
+                            "Could not parse message #%s in chat %s", notename, str(note_chat_id)
+                        )
+                        log.warning("Message was: %s", str(note.value))
         return
     elif show_none:
         message.reply_text("This note doesn't exist")
