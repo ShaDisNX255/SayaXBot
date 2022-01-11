@@ -112,6 +112,7 @@ def do(func, bot, update, context):
     content = update.message.text.split(" ", 1)[-1]
     body = cleanup_code(content)
     env = namespace_of(update.message.chat_id, update, bot, context)
+    app = dispatcher.bot
     os.chdir(os.getcwd())
     with open(
         os.path.join(os.getcwd(), "tg_bot/modules/helper_funcs/temp.txt"), "w",

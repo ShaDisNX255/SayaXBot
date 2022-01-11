@@ -159,6 +159,7 @@ def pip_install(update: Update, context: CallbackContext):
 @dev_plus
 def allow_groups(update: Update, context: CallbackContext):
     args = context.args
+    global ALLOW_CHATS
     if not args:
         state = "Lockdown is " + "on" if not ALLOW_CHATS else "off"
         update.effective_message.reply_text(f"Current state: {state}")

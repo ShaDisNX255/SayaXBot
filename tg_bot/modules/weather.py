@@ -52,8 +52,11 @@ def weather(update: Update, context: CallbackContext):
                     return
                 city = newcity[0].strip() + "," + countrycode.strip()
         url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={APPID}"
-        request = get(url)
-        result = json.loads(request.text)
+        try:
+            request = get(url)
+            result = json.loads(request.text)
+        except ConnectionError:
+            return message.reply_text("Connection timed out! please try again later.")
 
         if request.status_code != 200:
             msg = "No weather information for this location!"

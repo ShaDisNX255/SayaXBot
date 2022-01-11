@@ -382,8 +382,11 @@ def mychatmemberupdates(update: Update, _: CallbackContext):
             dispatcher.bot.send_message(OWNER_ID, new_group, parse_mode=ParseMode.HTML)
 
 def admincacheupdates(update: Update, _: CallbackContext):
-    oldstat = update.chat_member.old_chat_member.status
-    newstat = update.chat_member.new_chat_member.status
+    try:
+        oldstat = update.chat_member.old_chat_member.status
+        newstat = update.chat_member.new_chat_member.status
+    except AttributeError:
+        return
     if (
         oldstat == "administrator"
         and newstat != "administrator"

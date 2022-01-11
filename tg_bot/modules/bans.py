@@ -9,6 +9,7 @@ from telegram.utils.helpers import mention_html
 from tg_bot import (
     BAN_STICKER,
     DEV_USERS,
+    MESSAGE_DUMP,
     MOD_USERS,
     SUDO_USERS,
     SUPPORT_USERS,
@@ -159,7 +160,7 @@ def ban(update: Update, context: CallbackContext):  # sourcery no-metrics
     if message.text.startswith(('/s','!s','>s')):
         silent = True
         if not can_delete(chat, context.bot.id):
-            message.reply_text("I don't have permission to delete messages here!")
+            message.reply_text("I dont't have permission to delete messages here!")
             return ""
     else:
         silent = False
@@ -334,8 +335,8 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
                 user_id,
                 chat.title,
                 chat.id,
-                excp.message,
-            ))
+                excp.message)
+            )
             message.reply_text("Well damn, I can't ban that user.")
 
     return log_message
@@ -450,7 +451,7 @@ def kickme(update: Update, context: CallbackContext) -> str:
 @can_restrict
 @u_admin(UserClass.MOD, AdminPerms.CAN_RESTRICT_MEMBERS)
 @loggable
-def unban(update: Update, context: CallbackContext) -> str:
+def unban(update: Update, context: CallbackContext) -> Optional[str]:
     message = update.effective_message
     u = update.effective_user
     chat = update.effective_chat

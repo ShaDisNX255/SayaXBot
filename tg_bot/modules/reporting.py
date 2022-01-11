@@ -18,7 +18,8 @@ from ..modules.helper_funcs.anonymous import user_admin as u_admin, AdminPerms, 
 REPORT_GROUP = 12
 REPORT_IMMUNE_USERS = SUDO_USERS + WHITELIST_USERS
 
-@kigcmd(command='reports')
+@kigcmd(command='reports', run_async=True)
+@bot_admin
 @spamcheck
 @u_admin(UserClass.MOD, AdminPerms.CAN_CHANGE_INFO)
 def report_setting(update: Update, context: CallbackContext):
@@ -63,10 +64,11 @@ def report_setting(update: Update, context: CallbackContext):
             f"This group's current setting is: `{sql.chat_should_report(chat.id)}`",
             parse_mode=ParseMode.MARKDOWN,
         )
+z
 
-
-@kigcmd(command='report', filters=Filters.chat_type.groups, group=REPORT_GROUP)
-@kigmsg((Filters.regex(r"(?i)@admin(s)?")), group=REPORT_GROUP)
+@kigcmd(command='report', filters=Filters.chat_type.groups, group=REPORT_GROUP, run_async=True)
+@kigmsg((Filters.regex(r"(?i)@admin(s)?")), group=REPORT_GROUP, run_async=True)
+@bot_admin
 @user_not_admin
 @loggable
 @spamcheck
@@ -116,7 +118,6 @@ def report(update: Update, context: CallbackContext) -> str:
         if reported_user.id in admin_list:
             message.reply_text("Why are you reporting an admin?")
             return ""
-        
         msg = (
             f"<b>⚠️ Report: </b>{html.escape(chat.title)}\n"
             f"<b> • Report by:</b> {mention_html(user.id, user.first_name)}(<code>{user.id}</code>)\n"
@@ -154,10 +155,9 @@ def report(update: Update, context: CallbackContext) -> str:
             ],
         ]
         reply_markup2 = InlineKeyboardMarkup(keyboard2)
-        
         reportmsg = f"{mention_html(reported_user.id, reported_user.first_name)} was reported to the admins."
         reportmsg += tmsg
-        message.reply_to_message.reply_text(
+        message.reply_text(
             reportmsg,
             parse_mode=ParseMode.HTML,
             reply_markup=reply_markup2
@@ -174,13 +174,6 @@ def buttons(update: Update, context: CallbackContext):
     bot = context.bot
     query = update.callback_query
     splitter = query.data.replace("reported_", "").split("=")
-    kyb_no_del = [
-        [
-            InlineKeyboardButton(
-                    "📝 Read the rules", url="t.me/{}?start={}".format(bot.username, splitter[0]),
-                )
-        ],
-    ]
     if splitter[1] == "kick":
         try:
             bot.ban_chat_member(splitter[0], splitter[2])
@@ -251,6 +244,19 @@ def buttons(update: Update, context: CallbackContext):
                 text=f"🛑 Failed to close panel!\n{err}",
                 show_alert=True
             )
+
+
+def __migrate__(old_chat_id, new_chat_id):
+    sql.migrate_chat(old_chat_id, new_chat_id)
+
+def __chat_settings__(chat_id, _):
+    return f"This chat is setup to send user reports to admins, via /report and @admin: `{sql.chat_should_report(chat_id)}`"
+
+def __user_settings__(user_id):
+    if sql.user_should_report(user_id) is True:
+        return "You will receive reports from chats you're admin."
+    else:
+        return "You will *not* receive reports from chats you're admin."
 
 
 from tg_bot.modules.language import gs

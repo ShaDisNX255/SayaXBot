@@ -146,10 +146,10 @@ def warn(
             f"<code>❕</code><b>Warn Event</b>\n"
             f"<code> </code><b>•  User:</b> {mention_html(user.id, user.first_name)}\n"
             f"<code> </code><b>•  Count:</b> {num_warns}/{limit}\n"
-            f"Please take some of your precious time to read the rules!"
         )
         if reason:
             reply += f"\n<code> </code><b>•  Reason:</b> {html.escape(reason)}"
+        reply += '\nPlease take some of your precious time to read the rules!'
 
         log_reason = (
             f"<b>{html.escape(chat.title)}:</b>\n"
@@ -240,10 +240,12 @@ def swarn(
             f"<code>❕</code><b>Warn Event</b>\n"
             f"<code> </code><b>•  User:</b> {mention_html(user.id, user.first_name)}\n"
             f"<code> </code><b>•  Count:</b> {num_warns}/{limit}\n"
-            f"Please take some of your precious time to read the rules!"
+
         )
         if reason:
             reply += f"\n<code> </code><b>•  Reason:</b> {html.escape(reason)}"
+
+        reply += f"\nPlease take some of your precious time to read the rules!"
 
         log_reason = (
             f"<b>{html.escape(chat.title)}:</b>\n"
@@ -340,11 +342,12 @@ def dwarn(
             f"<code>❕</code><b>Warn Event</b>\n"
             f"<code> </code><b>•  User:</b> {mention_html(user.id, user.first_name)}\n"
             f"<code> </code><b>•  Count:</b> {num_warns}/{limit}\n"
-            f"Please take some of your precious time to read the rules!"
+
         )
         if reason:
             reply += f"\n<code> </code><b>•  Reason:</b> {html.escape(reason)}"
-
+        reply += f"\nPlease take some of your precious time to read the rules!"
+        
         log_reason = (
             f"<b>{html.escape(chat.title)}:</b>\n"
             f"#WARN\n"

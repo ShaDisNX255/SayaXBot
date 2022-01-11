@@ -457,7 +457,7 @@ def check_and_ban(update, user_id, should_message=True):
         sw_ban = sw.get_ban(int(user_id))
     except AttributeError:
         sw_ban = None
-    except (SpamWatchError, Error, UnauthorizedError, NotFoundError, Forbidden, TooManyRequests) as e:
+    except (SpamWatchError, Error, UnauthorizedError, NotFoundError, Forbidden, TooManyRequests, ConnectionError) as e:
         log.warning(f" SpamWatch Error: {e}")
         sw_ban = None
 
