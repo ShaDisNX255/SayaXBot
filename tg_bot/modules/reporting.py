@@ -64,7 +64,7 @@ def report_setting(update: Update, context: CallbackContext):
             f"This group's current setting is: `{sql.chat_should_report(chat.id)}`",
             parse_mode=ParseMode.MARKDOWN,
         )
-z
+
 
 @kigcmd(command='report', filters=Filters.chat_type.groups, group=REPORT_GROUP, run_async=True)
 @kigmsg((Filters.regex(r"(?i)@admin(s)?")), group=REPORT_GROUP, run_async=True)
