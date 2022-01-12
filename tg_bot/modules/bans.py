@@ -35,7 +35,7 @@ from tg_bot.modules.log_channel import loggable, gloggable
 from tg_bot.modules.helper_funcs.decorators import kigcmd
 
 def cannot_ban(user_id, message):
-    
+
     if user_id == OWNER_ID:
         message.reply_text("I'd never ban my owner.")
     elif user_id in DEV_USERS:
@@ -82,7 +82,7 @@ def ban(update: Update, context: CallbackContext):  # sourcery no-metrics
         if message.text.startswith(('/s','!s','>s')):
             silent = True
             if not can_delete(chat, context.bot.id):
-                message.reply_text("I dont't have permission to delete messages here!")
+                message.reply_text("I don't have permission to delete messages here!")
                 return ""
         else:
             silent = False
@@ -198,7 +198,7 @@ def ban(update: Update, context: CallbackContext):  # sourcery no-metrics
 
         if silent:
             if delsilent and message.reply_to_message:
-                message.reply_to_message.delete() 
+                message.reply_to_message.delete()
             message.delete()
             return log
         if delban:
@@ -479,7 +479,7 @@ def unban(update: Update, context: CallbackContext) -> Optional[str]:
         else:
             message.reply_text("Failed to ban channel")
         return ""
-    
+
     user_id, reason = extract_user_and_text(message, args)
     if not user_id:
         message.reply_text("I doubt that's a user.")
