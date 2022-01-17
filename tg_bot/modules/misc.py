@@ -173,7 +173,7 @@ def info(update: Update, context: CallbackContext):  # sourcery no-metrics
     temp = message.reply_text("<code>Checking Info...</code>", parse_mode=ParseMode.HTML)
 
     if isinstance(user, User):
-        text = get_user_info(user, chat, False)
+        text = get_user_info(user, chat)
     else:
         text = get_chat_info(user)
 
@@ -216,7 +216,7 @@ def info(update: Update, context: CallbackContext):  # sourcery no-metrics
     if hasattr(user, 'type') and user.type != "private":
         text = get_chat_info(user)
     else:
-        text = get_user_info(user, chat)
+        text = get_user_info(user, chat, True)
 
     temp.edit_text(
         text, parse_mode=ParseMode.HTML, disable_web_page_preview=True
@@ -290,16 +290,17 @@ def get_user_info(user, chat, full_info=False):
         except BadRequest:
             pass
 
-        text += "\n"
-        for mod in USER_INFO:
-            if mod.__mod_name__ == "Users":
-                continue
-            try:
-                mod_info = mod.__user_info__(user.id)
-            except TypeError:
-                mod_info = mod.__user_info__(user.id, chat.id)
-            if mod_info:
-                text += mod_info
+        if user.id not in [777000, 1087968824, bot.id]:
+            text += "\n"
+            for mod in USER_INFO:
+                if mod.__mod_name__ == "Users":
+                    continue
+                try:
+                    mod_info = mod.__user_info__(user.id)
+                except TypeError:
+                    mod_info = mod.__user_info__(user.id, chat.id)
+                if mod_info:
+                    text += mod_info
 
         if (
             user.id

@@ -3,7 +3,7 @@ from tg_bot.modules.helper_funcs.decorators import kigcmd
 import requests, telegram, datetime, time
 
 
-@kigcmd(command="whois")
+@kigcmd(command=["spb", "spbinfo"])
 def lookup(update, context):
     message = update.effective_message
     args = context.args

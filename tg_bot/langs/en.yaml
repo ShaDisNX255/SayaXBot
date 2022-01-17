@@ -75,11 +75,6 @@ admin_help: |
    • `/setgdesc`*:* sets the group description
    • `/setgsticker`*:* sets the group sticker pack
    • `/setgstickers`*:* sets the group sticker pack
-   
-   *Group owner only!*
-   *Lockdown:* 
-   • `/lockgroup (on/off)` : check and toggle the current lockgroup status
-   By enabling *lockgroup* the bot will kick every user on joining the group.
 
 afk_help: |
    - /afk <reason>: mark yourself as AFK(away from keyboard).
@@ -405,6 +400,8 @@ misc_help: |
       • /id: get the current group id. If used by replying to a message, gets that user's id.
       • /gifid: reply to a gif to me to tell you its file ID.
       • /info: get information about a user.
+      • /u: get information about a user.
+      • /whois: get short information about a user.
       • /pfp: get profile pic of a user.
       • /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
       • /ud <word>: Type the word or expression you want to search use.
@@ -432,10 +429,11 @@ misc_help: |
       • /stickerid: reply to a sticker to get its ID.
       • /getsticker: reply to a sticker to get the raw PNG image.
       • /steal: reply to a sticker or image to add it to your pack.
-      • /whois : get info about a user from @Intellivoid's SpamProtection API
+      • /spb : get info about a user from @Intellivoid's SpamProtection API
+      • /spbinfo : get info about a user from @Intellivoid's SpamProtection API
 
-      # • /youtube : Gets media from youtube in video or audio format
-      # • /yt: Same as /youtube
+#      • /youtube : Gets media from youtube in video or audio format
+#      • /yt: Same as /youtube
 #      ───────────────────────────────
 #      *Last.FM*
 #      Share what you're what listening to with the help of this module!
@@ -672,3 +670,8 @@ sticker_blacklist_help: |
        Note:
          • `<sticker link>` can be `https://t.me/addstickers/<sticker>` or just `<sticker>` or reply to the sticker message
 
+
+raid_help: |
+   *Admins only!* 
+   • `/lockgroup (on/off)` : check and toggle the current lockgroup status
+   By enabling *lockgroup* the bot will kick every user on joining the group.
