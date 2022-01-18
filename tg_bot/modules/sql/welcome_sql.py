@@ -2,6 +2,8 @@ import random
 import threading
 from typing import Union
 
+from sqlalchemy.sql.expression import false
+
 from tg_bot.modules.helper_funcs.msg_types import Types
 from tg_bot.modules.sql import BASE, SESSION
 from sqlalchemy import BigInteger, Boolean, Column, Integer, String, UnicodeText
@@ -306,11 +308,16 @@ class DefenseMode(BASE):
     __tablename__ = "defense_mode"
     chat_id = Column(String(14), primary_key=True)
     status = Column(Boolean, default=False)
+    time = Column(Integer, default=21600)
+    acttime = Column(Integer, default=3600)
+    permanent = Column(Boolean, default=False)
 
-    def __init__(self, chat_id, status):
+    def __init__(self, chat_id, status, time, acttime, permanent):
         self.chat_id = str(chat_id)
         self.status = status
-
+        self.time = time
+        self.acttime = acttime
+        self.permanent = permanent
 
 Welcome.__table__.create(checkfirst=True)
 WelcomeButtons.__table__.create(checkfirst=True)
@@ -623,19 +630,31 @@ def migrate_chat(old_chat_id, new_chat_id):
 
 def getDefenseStatus(chat_id):
     try:
-        resultObj = SESSION.query(DefenseMode).get(str(chat_id))
-        if resultObj:
-            return resultObj.status
-        return False  #default
+        stat = SESSION.query(DefenseMode).get(str(chat_id))
+        if stat:
+            return stat.status, stat.time, stat.acttime
+        return False, 21600, 3600 #default
     finally:
         SESSION.close()
 
 
-def setDefenseStatus(chat_id, status):
+def setDefenseStatus(chat_id, status, time=21600, acttime=3600):
     with DEFENSE_LOCK:
         prevObj = SESSION.query(DefenseMode).get(str(chat_id))
         if prevObj:
+            perma = prevObj.permanent
             SESSION.delete(prevObj)
-        newObj = DefenseMode(str(chat_id), status)
+        newObj = DefenseMode(str(chat_id), status, time, acttime, perma or False)
         SESSION.add(newObj)
         SESSION.commit()
+
+def toggleDefenseStatus(chat_id):
+    newObj = True
+    with DEFENSE_LOCK:
+        prevObj = SESSION.query(DefenseMode).get(str(chat_id))
+        if prevObj:
+            newObj = not prevObj.status
+        stat = DefenseMode(str(chat_id), newObj, prevObj.time or 21600, prevObj.acttime or 3600, prevObj.permanent or False)
+        SESSION.add(stat)
+        SESSION.commit()
+        return newObj

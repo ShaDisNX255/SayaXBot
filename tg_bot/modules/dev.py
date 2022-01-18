@@ -171,7 +171,7 @@ def allow_groups(update: Update, context: CallbackContext):
     else:
         update.effective_message.reply_text("Format: /lockdown Yes/No or Off/On")
         return
-    update.effective_message.reply_text("Done! Lockgroups value toggled.")
+    update.effective_message.reply_text("Done! lockdown value toggled.")
 
 @kigcmd(command='getinfo') # todo: flood fed rules gbanstat locks? reports
 # ! make as chat and get current if possible

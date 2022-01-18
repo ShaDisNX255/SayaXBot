@@ -28,3 +28,4 @@ ujson
 gtts
 wikipedia
 SibylSystem
+pytimeparse

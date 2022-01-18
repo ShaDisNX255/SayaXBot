@@ -540,7 +540,7 @@ def unban(update: Update, context: CallbackContext) -> Optional[str]:
 @bot_admin
 @can_restrict
 @gloggable
-def selfunban(context: CallbackContext, update: Update) -> Optional[str]:
+def selfunban(update: Update, context: CallbackContext) -> Optional[str]:
     message = update.effective_message
     user = update.effective_user
     bot, args = context.bot, context.args
