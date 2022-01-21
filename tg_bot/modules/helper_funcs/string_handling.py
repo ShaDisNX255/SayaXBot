@@ -30,7 +30,8 @@ MATCH_MD_v2 = re.compile(
 )
 
 # regex to find []() links -> hyperlinks/buttons
-LINK_REGEX = re.compile(r"(?<!\\)\[(.+?)\]\((.*?)\)")
+LINK_REGEX = re.compile(r"(?<!\\)\[.+?\]\((.*?)\)")
+LINK_REGEX_v2 = re.compile(r"(?<!\\)\[(.+?)\]\((.*?)\)")
 BTN_URL_REGEX = re.compile(r"(\[([^\[]+?)\]\(buttonurl:(?:/{0,2})(.+?)(:same)?\))")
 
 
@@ -102,7 +103,7 @@ def markdown_parser_v2(
             end -= count
 
             if ent.type == "url":
-                for match in LINK_REGEX.finditer(txt):
+                for match in LINK_REGEX_v2.finditer(txt):
                     if match.start(2) <= start and end <= match.end(2) and not match.group(2).startswith("buttonurl"):
                         print(match.group(2))
                         mt = match.group(1).center(count)
