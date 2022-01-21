@@ -186,7 +186,7 @@ def sudo_plus(func):
                 pass
         else:
             update.effective_message.reply_text(
-                "This command is restricted to users with spacial access, you can't use it."
+                "This command is restricted to users with special access, you can't use it."
             )
 
     return is_sudo_plus_func
