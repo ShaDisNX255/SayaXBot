@@ -523,21 +523,18 @@ def settings_button(update: Update, context: CallbackContext):
                 keyboard = CHAT_SETTINGS[module].__chat_settings_buttons__(chat_id, user.id)
             except AttributeError:
                 keyboard = []
-            kbrd = InlineKeyboardMarkup(
-                    [
-                        [
+            kbrd = [
                             InlineKeyboardButton(
                                 text="Back",
                                 callback_data="stngs_back({})".format(chat_id),
                             )
                         ]
-                    ]
-                )
             keyboard.append(kbrd)
+            replymrkp = InlineKeyboardMarkup(keyboard)
             query.message.edit_text(
                 text=text,
                 parse_mode=ParseMode.MARKDOWN,
-                reply_markup=keyboard
+                reply_markup=replymrkp
             )
 
         elif prev_match:
