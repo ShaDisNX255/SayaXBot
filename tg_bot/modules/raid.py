@@ -97,7 +97,7 @@ def setRaid(update: Update, context: CallbackContext) -> Optional[str]:
 @connection_status
 @user_admin_no_reply
 @loggable
-def enable_raid_cb(update: Update, _: CallbackContext) -> Optional[str]:
+def enable_raid_cb(update: Update, ctx: CallbackContext) -> Optional[str]:
     args = update.callback_query.data.replace("enable_raid=","").split("=")
     chat = update.effective_chat
     user = update.effective_user
@@ -111,17 +111,18 @@ def enable_raid_cb(update: Update, _: CallbackContext) -> Optional[str]:
     def disable_raid(_):
         sql.setDefenseStatus(chat_id, False, t, acttime)
         log.info("disbled raid mode in {}".format(chat_id))
-        logmsg = (
-            f"<b>{html.escape(chat.title)}:</b>\n"
-            f"#RAID\n"
-            f"Automatically Disabled\n"
-        )
-        return logmsg
+        ctx.bot.send_message(chat_id, "Raid mode has been automatically disabled!")
+        # logmsg = (
+        #     f"<b>{html.escape(chat.title)}:</b>\n"
+        #     f"#RAID\n"
+        #     f"Automatically Disabled\n"
+        # )
+        # return logmsg
     j.run_once(disable_raid, time)
     logmsg = (
         f"<b>{html.escape(chat.title)}:</b>\n"
         f"#RAID\n"
-        f"Enablbed for {readable_time}\n"
+        f"Enabled for {readable_time}\n"
         f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
     )
     return logmsg

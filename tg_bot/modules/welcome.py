@@ -194,8 +194,10 @@ def new_member(update: Update, context: CallbackContext):  # sourcery no-metrics
 
         if defense and new_mem.id not in WHITELISTED:
             bantime = deftime
-            chat.ban_member(new_mem.id, until_date=bantime)
-        
+            try:
+                chat.ban_member(new_mem.id, until_date=bantime)
+            except:
+                pass
         if sw != None:
             sw_ban = sw.get_ban(new_mem.id)
             if sw_ban:
