@@ -641,6 +641,7 @@ def getDefenseStatus(chat_id):
 def setDefenseStatus(chat_id, status, time=21600, acttime=3600):
     with DEFENSE_LOCK:
         prevObj = SESSION.query(DefenseMode).get(str(chat_id))
+        perma = False
         if prevObj:
             perma = prevObj.permanent
             SESSION.delete(prevObj)
