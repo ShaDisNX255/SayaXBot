@@ -29,3 +29,4 @@ gtts
 wikipedia
 SibylSystem
 pytimeparse
+lxml
