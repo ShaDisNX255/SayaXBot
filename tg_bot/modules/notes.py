@@ -54,7 +54,7 @@ ENUM_FUNC_MAP = {
 
 
 # Do not async
-def get(update, context, notename, show_none=True, no_format=False):
+def get(update: Update, context: CallbackContext, notename: str, show_none: bool = True, no_format: bool = False):
     # sourcery no-metrics
     bot = context.bot
     chat = update.effective_message.chat
@@ -64,6 +64,7 @@ def get(update, context, notename, show_none=True, no_format=False):
     message = update.effective_message  # type: Optional[Message]
     user = update.effective_user
     preview = True
+    protect = False
 
     if note:
         if MessageHandlerChecker.check_user(update.effective_user.id):
@@ -114,10 +115,11 @@ def get(update, context, notename, show_none=True, no_format=False):
                 "user",
                 "admin",
                 "preview",
+                "protect",
             ]
             valid_format = escape_invalid_curly_brackets( # replace the curly brackets with their non escaped version because we will format them
-                note.value.replace("\\{first\\}", '{first}').replace("\\{last\\}", '{last}').replace("\\{fullname\\}", '{fullname}').replace("\\{username\\}", '{username}').replace("\\{id\\}", '{id}').replace("\\{chatname\\}", '{chatname}').replace("\\{mention\\}", '{mention}').replace("\\{user\\}", '{user}').replace("\\{admin\\}", '{admin}').replace("\\{preview\\}", '{preview}')
-                , VALID_NOTE_FORMATTERS,
+                note.value.replace("\\{first\\}", '{first}').replace("\\{last\\}", '{last}').replace("\\{fullname\\}", '{fullname}').replace("\\{username\\}", '{username}').replace("\\{id\\}", '{id}').replace("\\{chatname\\}", '{chatname}').replace("\\{mention\\}", '{mention}').replace("\\{user\\}", '{user}').replace("\\{admin\\}", '{admin}').replace("\\{preview\\}", '{preview}').replace("\\{protect\\}", '{protect}')
+                , VALID_NOTE_FORMATTERS, # this is a terrible way, i need to fix this
             )
             if valid_format:
                 if not no_format and "%%%" in valid_format:
@@ -131,6 +133,8 @@ def get(update, context, notename, show_none=True, no_format=False):
                     return
                 if "{preview}" in text:
                     preview = False
+                if "{protect}" in text:
+                    protect = True
                 text = text.format(
                     first=escape_markdown(message.from_user.first_name),
                     last=escape_markdown(
@@ -160,6 +164,7 @@ def get(update, context, notename, show_none=True, no_format=False):
                     user="",
                     admin="",
                     preview="",
+                    protect="",
                 )
             else:
                 text = ""
@@ -168,7 +173,7 @@ def get(update, context, notename, show_none=True, no_format=False):
             parseMode = ParseMode.MARKDOWN_V2
             buttons = sql.get_buttons(note_chat_id, notename)
             if no_format:
-                parseMode = None
+                parseMode = None # need to fix this too
                 text = text.replace("\*", "*").replace("\[", "[").replace("\]", "]").replace("\(", "(").replace("\)", ")").replace("\+", "+").replace("\|", "|").replace("\{", "{").replace("\}", "}").replace("\.", ".").replace("\-", "-").replace("\'", "'").replace("\_", "_").replace("\~", "~").replace("\`", "`").replace("\>", ">").replace("\#", "#").replace("\-", "-").replace("\=", "=").replace("\!", "!").replace("\\\\", "\\")
                 text += revert_buttons(buttons)
             else:
@@ -184,7 +189,8 @@ def get(update, context, notename, show_none=True, no_format=False):
                         reply_to_message_id=reply_id,
                         parse_mode=parseMode,
                         reply_markup=keyboard,
-                        disable_web_page_preview=bool(preview)
+                        disable_web_page_preview=bool(preview),
+                        protect_content=bool(protect)
                     )
                 elif ENUM_FUNC_MAP[note.msgtype] == dispatcher.bot.send_sticker:
                     ENUM_FUNC_MAP[note.msgtype](
@@ -201,6 +207,7 @@ def get(update, context, notename, show_none=True, no_format=False):
                         reply_to_message_id=reply_id,
                         parse_mode=parseMode,
                         reply_markup=keyboard,
+                        protect_content=bool(protect)
                     )
 
             except BadRequest as excp:
@@ -229,7 +236,8 @@ def get(update, context, notename, show_none=True, no_format=False):
                                 reply_to_message_id=reply_id,
                                 parse_mode=ParseMode.MARKDOWN,
                                 reply_markup=keyboard,
-                                disable_web_page_preview=bool(preview)
+                                disable_web_page_preview=bool(preview),
+                                protect_content=bool(protect)
                             )
                         elif ENUM_FUNC_MAP[note.msgtype] == dispatcher.bot.send_sticker:
                             ENUM_FUNC_MAP[note.msgtype](
@@ -246,6 +254,7 @@ def get(update, context, notename, show_none=True, no_format=False):
                                 reply_to_message_id=reply_id,
                                 parse_mode=ParseMode.MARKDOWN,
                                 reply_markup=keyboard,
+                                protect_content=bool(protect)
                             )
                     except:
                         

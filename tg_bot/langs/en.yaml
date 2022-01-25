@@ -287,6 +287,7 @@ filling_help: |
       - <code>{admin}</code>: Note-Filter can only be used by chat admins (not for non-admins)
       - <code>{user}</code>: Note-Filter can only be used by chat users (not for admins)
       - <code>{preview}</code>: show webpage preview for links in notes (defaults to false)
+      - <code>{protect}</code>: protect the note contect from being shared (defaults to false)
 
 antispam_help: |
      *Admins only:*
