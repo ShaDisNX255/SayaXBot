@@ -1,23 +1,24 @@
 import html
 
-from tg_bot import dispatcher, SUDO_USERS, spamcheck
-from tg_bot.modules.helper_funcs.extraction import extract_user
-from telegram.ext import CallbackContext, CallbackQueryHandler, Filters
-import tg_bot.modules.sql.approve_sql as sql
-from tg_bot.modules.helper_funcs.chat_status import user_admin
-from tg_bot.modules.log_channel import loggable
 from telegram import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton, Update
-from telegram.utils.helpers import mention_html
 from telegram.error import BadRequest
-from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
+from telegram.ext import CallbackContext, Filters
+from telegram.utils.helpers import mention_html
 
-from ..modules.helper_funcs.anonymous import user_admin as u_admin, AdminPerms, resolve_user as res_user, UserClass
+import tg_bot.modules.sql.approve_sql as sql
+from tg_bot import SUDO_USERS
+from tg_bot.modules.helper_funcs.chat_status import user_admin as u_admin
+from tg_bot.modules.helper_funcs.decorators import kigcmd, kigcallback
+from tg_bot.modules.helper_funcs.extraction import extract_user
+from tg_bot.modules.log_channel import loggable
+from ..modules.helper_funcs.anonymous import user_admin, AdminPerms
+
 
 @kigcmd(command='approve', filters=Filters.chat_type.groups)
 @spamcheck
 @u_admin(UserClass.ADMIN, AdminPerms.CAN_CHANGE_INFO)
 @loggable
-def approve(update, context) -> str:
+def approve(update: Update, context: CallbackContext) -> str:
     message = update.effective_message
     chat_title = message.chat.title
     chat = update.effective_chat
@@ -47,7 +48,8 @@ def approve(update, context) -> str:
         return ""
     sql.approve(message.chat_id, user_id)
     message.reply_text(
-        f"[{member.user['first_name']}](tg://user?id={member.user['id']}) has been approved in {chat_title}! They will now be ignored by automated admin actions like locks, blocklists, and antiflood.",
+        f"[{member.user['first_name']}](tg://user?id={member.user['id']}) has been approved in {chat_title}! They "
+        f"will now be ignored by automated admin actions like locks, blocklists, and antiflood.",
         parse_mode=ParseMode.MARKDOWN,
     )
     log_message = (
@@ -58,11 +60,12 @@ def approve(update, context) -> str:
 
     return log_message
 
+
 @kigcmd(command='unapprove', filters=Filters.chat_type.groups)
 @spamcheck
 @u_admin(UserClass.ADMIN, AdminPerms.CAN_CHANGE_INFO)
 @loggable
-def disapprove(update, context) -> str:
+def disapprove(update: Update, context: CallbackContext):
     message = update.effective_message
     chat_title = message.chat.title
     chat = update.effective_chat
@@ -96,10 +99,11 @@ def disapprove(update, context) -> str:
 
     return log_message
 
+
 @kigcmd(command='approved', filters=Filters.chat_type.groups)
 @spamcheck
 @user_admin
-def approved(update, context):
+def approved(update: Update, _: CallbackContext):
     message = update.effective_message
     chat_title = message.chat.title
     chat = update.effective_chat
@@ -129,7 +133,7 @@ def approval(update, context):
         )
         return ""
     member = chat.get_member(int(user_id))
-        
+
     if sql.is_approved(message.chat_id, user_id):
         message.reply_text(
             f"{member.user['first_name']} is an approved user. Locks, antiflood, and blocklists won't apply to them."
@@ -142,7 +146,7 @@ def approval(update, context):
 
 @kigcmd(command='unapproveall', filters=Filters.chat_type.groups)
 @spamcheck
-def unapproveall(update: Update, context: CallbackContext):
+def unapproveall(update: Update, _: CallbackContext):
     chat = update.effective_chat
     user = update.effective_user
     member = chat.get_member(user.id)
@@ -167,8 +171,9 @@ def unapproveall(update: Update, context: CallbackContext):
             parse_mode=ParseMode.MARKDOWN,
         )
 
+
 @kigcallback(pattern=r"unapproveall_.*")
-def unapproveall_btn(update: Update, context: CallbackContext):
+def unapproveall_btn(update: Update, _: CallbackContext):
     query = update.callback_query
     chat = update.effective_chat
     message = update.effective_message
@@ -191,9 +196,12 @@ def unapproveall_btn(update: Update, context: CallbackContext):
         else:
             query.answer("Only owner of the chat can do this.")
 
+
 from tg_bot.modules.language import gs
+
 
 def get_help(chat):
     return gs(chat, "approve_help")
+
 
 __mod_name__ = "Approvals"
