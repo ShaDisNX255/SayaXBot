@@ -659,3 +659,13 @@ def toggleDefenseStatus(chat_id):
         SESSION.add(stat)
         SESSION.commit()
         return newObj
+
+def _ResetRaidOnRestart():
+    with DEFENSE_LOCK:
+        raid = SESSION.query(DefenseMode).all()
+        for r in raid:
+            r.status = False
+        SESSION.commit()
+
+# it uses a cron job to turn off so if the bot restarts then it will stay on
+_ResetRaidOnRestart()
