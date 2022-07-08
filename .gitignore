@@ -8,6 +8,9 @@ tg_bot/config.ini
 .directory
 tg_bot/modules/helper_funcs/temp.txt
 start-3.6.bat
+SayaXBot*
+saya.sh
+sp310*
 *.session
 kangsticker.png
 venv
