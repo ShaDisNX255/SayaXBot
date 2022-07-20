@@ -154,7 +154,7 @@ def get(update: Update, context: CallbackContext, notename: str, show_none: bool
 
                 message.reply_text(
                         "This note could not be sent, as it is incorrectly formatted. "
-                    "Try getting the noformat version or ask in @TheBotsSupport if you can't figure out why!"
+                    "Try getting the noformat version or ask in @SayaBotSupport if you can't figure out why!"
                 )
                 log.exception(
                         "Could not parse message #%s in chat %s\n\nare you sure it's using the new format?",

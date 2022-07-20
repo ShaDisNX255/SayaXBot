@@ -13,7 +13,7 @@
 ![Repository Size](https://img.shields.io/github/repo-size/OdinRobot/OdinRobot?style=for-the-badge&logo=appveyor) </br>
 
 
-[![Join Support!](https://img.shields.io/badge/Support%20Chat-SupportGroup-red)](https://t.me/TheBotsSupport)
+[![Join Support!](https://img.shields.io/badge/Support%20Chat-SupportGroup-red)](https://t.me/SayaBotSupport)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cfb691a93a064d9ea753ef2b5fccf797)](https://www.codacy.com/manual/OdinRobot/OdinRobot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OdinRobot/OdinRobot&amp;utm_campaign=Badge_Grade)
 
 
@@ -23,7 +23,7 @@ Originally a marie fork
 
 Can be found on telegram as [Ōɖìղ • オーディン](https://t.me/OdinRobot).
 
-The Support group can be reached out to at [The support group](https://t.me/TheBotsSupport), where you can ask for help setting up your bot, discover/request new features, report bugs, and stay in the loop whenever a new update is available.
+The Support group can be reached out to at [The support group](https://t.me/SayaBotSupport), where you can ask for help setting up your bot, discover/request new features, report bugs, and stay in the loop whenever a new update is available.
 
 
 
@@ -43,7 +43,7 @@ The Support group can be reached out to at [The support group](https://t.me/TheB
 *Enjoy!*
 </details>
 
-For queries or any issues regarding the bot please open an issue ticket or visit us at [The support group](https://t.me/TheBotsSupport) 
+For queries or any issues regarding the bot please open an issue ticket or visit us at [The support group](https://t.me/SayaBotSupport) 
 For the latest news visit us at [the news channel](https://t.me/LukeBots) 
 
 ## Credits
@@ -53,7 +53,7 @@ All original credits go to Paul and his dedication, Without his efforts, this fo
 
 Huge thanks to [Dank-del](https://github.com/Dank-del) and to [everyone else](https://github.com/OdinRobot/OdinRobot/graphs/contributors) who helped in making this project
 
-Should any be missing kindly let us know at [The support group](https://t.me/TheBotsSupport) or simply submit a pull request on the readme.
+Should any be missing kindly let us know at [The support group](https://t.me/SayaBotSupport) or simply submit a pull request on the readme.
 
 
 -------------------------------------------------------------------------------------

@@ -64,7 +64,7 @@ def check_user(user_id: int, bot: Bot, update: Update) -> Optional[str]:
         elif user_id in WHITELIST_USERS:
             return "Bring an order from My Devs to fight a Whitelist user."
         elif user_id in MOD_USERS:
-            return "Moderators cannot be muted, report abuse at @TheBotsSupport."
+            return "Moderators cannot be muted, report abuse at @SayaBotSupport."
         else:
             return "Can't. Find someone else to mute but not this one."
 

@@ -1362,7 +1362,7 @@ def fmt_help(update: Update, context: CallbackContext):
         parse_mode=ParseMode.HTML,
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton(text="Back", callback_data=f"help_module({__mod_name__.lower()})"),
-            InlineKeyboardButton(text='Support', url='https://t.me/TheBotsSupport')]]
+            InlineKeyboardButton(text='Support', url='https://t.me/SayaBotSupport')]]
         ),
     )
     bot.answer_callback_query(query.id)

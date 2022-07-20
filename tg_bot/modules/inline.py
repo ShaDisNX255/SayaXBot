@@ -190,7 +190,7 @@ def inlineinfo(query: str, update: Update, context: CallbackContext) -> None:
         [
             [
                 InlineKeyboardButton(
-                    text="Report Error", url='https://t.me/TheBotsSupport'
+                    text="Report Error", url='https://t.me/SayaBotSupport'
                 ),
                 InlineKeyboardButton(
                     text="Search again",
@@ -233,7 +233,7 @@ def about(query: str, update: Update, context: CallbackContext) -> None:
             [
                 InlineKeyboardButton(
                     text="Support",
-                    url=f"https://t.me/TheBotsSupport",
+                    url=f"https://t.me/SayaBotSupport",
                 ),
                 InlineKeyboardButton(
                     text="Channel",
@@ -330,7 +330,7 @@ def spb(query: str, update: Update, context: CallbackContext) -> None:
             [
                 InlineKeyboardButton(
                     text="Report Error",
-                    url=f"https://t.me/TheBotsSupport",
+                    url=f"https://t.me/SayaBotSupport",
                 ),
                 InlineKeyboardButton(
                     text="Search again",

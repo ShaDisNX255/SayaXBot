@@ -9,7 +9,7 @@ set_chat_lang: "Great, {} it is from now on!"
 
 
 pm_start_text: |
-   Hi {}, I'm [{}](https://telegra.ph/file/3b56aca656c31ea44dfb7.jpg),
+   Hi {}, I'm [{}](https://dthezntil550i.cloudfront.net/nl/latest/nl1902201426381960008179947/1280_960/e8504f0d-a3a9-404d-9734-1ceea2d5753c.png),
    I am a modular group management bot with some fun extras ;)
    
    I can do a variety of things, and help u manage your group efficiently!
@@ -300,7 +300,7 @@ antispam_help: |
 
      Anti-Spam, used by bot devs to ban spammers across all groups. This helps protect
      you and your groups by removing spam flooders as quickly as possible.
-     *Note:* Users can appeal gbans or report spammers at @TheBotsSupport
+     *Note:* Users can appeal gbans or report spammers at @SayaBotSupport
 
      This also integrates @Spamwatch API to remove Spammers as much as possible from your chatroom!
 
@@ -556,7 +556,7 @@ nation_help: |
     *Disclaimer*: The Super Users in the bot are there for troubleshooting, support, banning potential scammers.
     
     Report abuse or ask us more on these at the Support chat.
-    You can visit @TheBotsSupport to query more about these.
+    You can visit @SayaBotSupport to query more about these.
 
 nlp_help: |
 
