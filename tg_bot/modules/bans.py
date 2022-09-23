@@ -26,22 +26,33 @@ from .helper_funcs.string_handling import extract_time
 from .log_channel import loggable, gloggable
 from .helper_funcs.decorators import kigcmd
 
-def cannot_ban(user_id, message):
-    
-    if user_id == OWNER_ID:
-        message.reply_text("I'd never ban my owner.")
-    elif user_id in DEV_USERS:
-        message.reply_text("I can't act against our own.")
-    elif user_id in SUDO_USERS:
-        message.reply_text("My sudos are ban immune")
-    elif user_id in SUPPORT_USERS:
-        message.reply_text("My support users are ban immune")
-    elif user_id in WHITELIST_USERS:
-        message.reply_text("Bring an order from My Devs to fight a Whitelist user.")
-    elif user_id in MOD_USERS:
-        message.reply_text("Moderators cannot be banned, report abuse at @SayaBotSupport.")
+def cannot_ban(banner_id, user_id, message) -> bool:
+    if banner_id in DEV_USERS:
+        if user_id not in DEV_USERS:
+            return False
+        else:
+            message.reply_text("Why are you trying to ban another dev?")
+            return True
     else:
-        message.reply_text("This user has immunity and cannot be banned.")
+        if user_id == OWNER_ID:
+            message.reply_text("I'd never ban my owner.")
+            return True
+        elif user_id in DEV_USERS:
+            message.reply_text("This user is one of my Devs, I can't act against our own.")
+            return True
+        elif user_id in SUDO_USERS:
+            message.reply_text("My sudos are ban immune")
+            return True
+        # elif user_id in SUPPORT_USERS:
+        #     message.reply_text("My support users are ban immune")
+            return True
+        elif user_id in WHITELIST_USERS:
+            message.reply_text("Let one of my Devs fight a Whitelist user.")
+            return True
+        elif user_id in MOD_USERS:
+            message.reply_text("Moderators cannot be banned, report abuse at @SayaBotSupport.")
+            return True
+        return False
 
 ban_myself = "Oh yeah, ban myself, noob!"
 
@@ -222,8 +233,11 @@ def ban(update: Update, context: CallbackContext) -> Optional[str]:  # sourcery 
         message.reply_text(ban_myself)
         return ''
 
+    elif cannot_ban(user.id, user_id, message):
+        return ''
+
     elif user_is_admin(update, user_id) and user.id not in DEV_USERS:
-        cannot_ban(user_id, message)
+        message.reply_text("This user has immunity and cannot be banned.")
         return ''
 
     elif did_ban := ban_user(bot, member, chat.id, reason = " ".join(args) or None):
@@ -267,7 +281,7 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
     message = update.effective_message
     log_message = ""
     bot, args = context.bot, context.args
-    
+
 
     user_id, reason = extract_user_and_text(message, args)
 
@@ -286,9 +300,12 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
         message.reply_text(ban_myself)
         return log_message
 
-    if user_is_admin(update, user_id) and user not in DEV_USERS:
-        cannot_ban(user_id, message)
-        return log_message
+    elif cannot_ban(user.id, user_id, message):
+        return ''
+
+    elif user_is_admin(update, user_id) and user.id not in DEV_USERS:
+        message.reply_text("This user has immunity and cannot be banned.")
+        return ''
 
     if not reason:
         message.reply_text("You haven't specified a time to ban this user for!")
@@ -388,9 +405,12 @@ def kick(update: Update, context: CallbackContext) -> str:
         message.reply_text("Yeahhh I'm not gonna do that.")
         return log_message
 
-    if user_is_admin(update, user_id) and user not in DEV_USERS:
-        cannot_ban(user_id, message)
-        return log_message
+    elif cannot_ban(user.id, user_id, message):
+        return ''
+
+    elif user_is_admin(update, user_id) and user.id not in DEV_USERS:
+        message.reply_text("This user has immunity and cannot be banned.")
+        return ''
 
     if chat.unban_member(user_id):
         bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
@@ -535,8 +555,11 @@ def unban(update: Update, context: CallbackContext) -> Optional[str]:  # sourcer
         message.reply_text(ban_myself)
         return ''
 
-    elif user_is_admin(update, user_id) and user.id not in DEV_USERS:
-        cannot_ban(user_id, message)
+    # elif cannot_ban(user.id, user_id, message):
+    #     return ''
+
+    elif user_is_admin(update, user_id):
+        message.reply_text("This user is an admin, so is not banned.")
         return ''
 
     elif member.status not in ["banned", "kicked"]:
