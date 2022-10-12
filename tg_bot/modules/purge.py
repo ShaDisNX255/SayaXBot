@@ -1,6 +1,6 @@
 import time
 from asyncio import sleep
-from telethon import events
+from telethon.events import NewMessage
 from telethon.tl.types import ChannelParticipantsAdmins
 from .helper_funcs.decorators import register
 from .sql.clear_cmd_sql import get_clearcmd
@@ -10,8 +10,8 @@ from .helper_funcs.telethn.chatstatus import (
 from telethon.errors.rpcerrorlist import MessageDeleteForbiddenError
 
 
-@register(pattern='(purge|p)', groups_only=True, no_args=True)
-async def purge_messages(event):
+@register(pattern='(?:(s)?purge|p)', groups_only=True, no_args=True)
+async def purge_messages(event: NewMessage.Event):
     start = time.perf_counter()
     if event.from_id is None:
         return
@@ -53,15 +53,16 @@ async def purge_messages(event):
         await event.client.delete_messages(event.chat_id, messages)
     except:
         pass
-    time_ = time.perf_counter() - start
-    text = f"Purged Successfully in {time_:0.2f} Second(s)"
-    prmsg = await event.respond(text, parse_mode='markdown')
+    if not event.pattern_match.group(1):
+        time_ = time.perf_counter() - start
+        text = f"Purged Successfully in {time_:0.2f} Second(s)"
+        prmsg = await event.respond(text, parse_mode='markdown')
 
-    cleartime = get_clearcmd(event.chat_id, "purge")
+        cleartime = get_clearcmd(event.chat_id, "purge")
 
-    if cleartime:
-        await sleep(cleartime.time)
-        await prmsg.delete()
+        if cleartime:
+            await sleep(cleartime.time)
+            await prmsg.delete()
 
 
 @register(pattern='(del|d)', groups_only=True, no_args=True)

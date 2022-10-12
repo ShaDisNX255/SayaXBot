@@ -107,7 +107,10 @@ def user_is_admin(update: Update,
 		try:
 			the_perm = perm.value
 		except AttributeError:
-			return bxp(update)
+			if perm.upper() in AdminPerms.__members__:
+				the_perm = perm
+			else:
+				return bxp(update)
 		return getattr(member, the_perm) or member.status == "creator"
 
 	return member.status in ["administrator", "creator"]  # check if user is admin

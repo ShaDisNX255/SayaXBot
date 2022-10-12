@@ -423,7 +423,7 @@ def warn_user(update: Update, context: CallbackContext) -> str:
 
     user_id, reason = extract_user_and_text(message, args)
 
-    if (message.reply_to_message and message.reply_to_message.sender_chat) or user_id < 0:
+    if (message.reply_to_message and message.reply_to_message.sender_chat) or (user_id and user_id < 0):
         message.reply_text("This command can't be used on channels, however you can ban them instead.")
         return ""
 

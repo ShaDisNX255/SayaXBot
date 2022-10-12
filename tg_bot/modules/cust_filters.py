@@ -424,6 +424,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                             parse_mode=parse_mode,
                             disable_web_page_preview=True,
                             reply_markup=keyboard,
+                            allow_sending_without_reply=True
                         )
                     except BadRequest as excp:
                         error_catch = get_exception(excp, filt, chat)
@@ -435,6 +436,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                                     parse_mode=ParseMode.HTML,
                                     disable_web_page_preview=True,
                                     reply_markup=keyboard,
+                                    allow_sending_without_reply=True
                                 )
                             except BadRequest as excp:
                                 log.exception("Error in filters: " + excp.message)
@@ -458,6 +460,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                         filt.file_id,
                         reply_to_message_id=message.message_id,
                         reply_markup=keyboard,
+                        allow_sending_without_reply=True
                     )
                 else:
                     ENUM_FUNC_MAP[filt.file_type](
@@ -467,6 +470,7 @@ def reply_filter(update, context):  # sourcery no-metrics
                         reply_to_message_id=message.message_id,
                         parse_mode=parse_mode,
                         reply_markup=keyboard,
+                        allow_sending_without_reply=True
                     )
             elif filt.is_sticker:
                 message.reply_sticker(filt.reply)

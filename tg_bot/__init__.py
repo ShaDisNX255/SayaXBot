@@ -131,6 +131,7 @@ class KigyoINIT:
         self.GLOBALANNOUNCE =  self.parser.getboolean("GLOBALANNOUNCE", False)
         self.BACKUP_PASS =  self.parser.get("BACKUP_PASS", None)
         self.SIBYL_KEY =  self.parser.get("SIBYL_KEY", None)
+        self.SIBYL_ENDPOINT = self.parser.get("SIBYL_ENDPOINT", "https://psychopass.kaizoku.cyou")
 
 
 
@@ -196,7 +197,7 @@ bot_username = KInit.bot_username
 GLOBALANNOUNCE = KInit.GLOBALANNOUNCE
 BACKUP_PASS = KInit.BACKUP_PASS
 SIBYL_KEY = KInit.SIBYL_KEY
-
+SIBYL_ENDPOINT = KInit.SIBYL_ENDPOINT
 BOT_ID = TOKEN.split(":")[0]
 
 
@@ -209,7 +210,7 @@ sibylClient: PsychoPass = None
 
 if SIBYL_KEY:
     try:
-        sibylClient = PsychoPass(SIBYL_KEY, show_license=False)
+        sibylClient = PsychoPass(SIBYL_KEY, show_license=False, host=SIBYL_ENDPOINT)
         log.info("Connected to Sibyl System, NONA Tower")
     except Exception as e:
         sibylClient = None

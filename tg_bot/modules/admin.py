@@ -1,11 +1,11 @@
 import html
+import time
 
 from telegram import ParseMode, Update
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext
 
 from telegram.utils.helpers import mention_html
-from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.tl.types import ChannelParticipantsAdmins
 from telethon.tl.types import ChannelParticipantCreator
 from tg_bot import telethn
@@ -23,9 +23,7 @@ from .helper_funcs.admin_status import (
     bot_admin_check,
     AdminPerms,
     get_bot_member,
-    bot_is_admin,
-    user_is_admin,
-    user_not_admin_check,
+    A_CACHE, B_CACHE
 )
 
 from typing import Optional
@@ -390,6 +388,35 @@ def invite(update: Update, context: CallbackContext) -> Optional[str]:
         update.effective_message.reply_text(
             "I can only give you invite links for supergroups and channels, sorry!"
         )
+
+
+@kigcmd(command=["admincache"], can_disable=False)
+@spamcheck
+def admincache(update: Update, context: CallbackContext):
+    chat = update.effective_chat
+    msg = update.effective_message
+    user = update.effective_user
+    try:
+        last = _admincache[chat.id]
+    except KeyError:
+        last = None
+    now = time.time()
+    if last and last + 600 > now:
+        return msg.reply_text("this command can only be used once every 10 minutes")
+
+    if chat.type in ["channel", "private"]:
+        return msg.reply_text("this command can only be used in groups")
+
+    if chat.get_member(user.id).status not in ["administrator", "creator"] and user.id != 1087968824:
+        return msg.reply_text("this command can only be used by admins")
+
+    A_CACHE[update.effective_chat.id] = update.effective_chat.get_administrators()
+    B_CACHE[update.effective_chat.id] = update.effective_chat.get_member(context.bot.id)
+    msg.reply_text("Admin cache updated")
+    _admincache[chat.id] = time.time()
+
+
+_admincache = dict()
 
 
 @register(pattern="(admin|admins|staff|adminlist)", groups_only=True, no_args=True)

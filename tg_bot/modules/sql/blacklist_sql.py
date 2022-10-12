@@ -55,17 +55,20 @@ CHAT_BLACKLISTS = {}
 CHAT_SETTINGS_BLACKLISTS = {}
 
 
-def add_to_blacklist(chat_id, trigger, action):
+def add_to_blacklist(chat_id, trigger, action) -> bool:
     with BLACKLIST_FILTER_INSERTION_LOCK:
+        global CHAT_BLACKLISTS
+        if len(CHAT_BLACKLISTS.get(str(chat_id), set())) >= 100:
+            return False
         blacklist_filt = BlackListFilters(str(chat_id), trigger, action)
 
         SESSION.merge(blacklist_filt)  # merge to avoid duplicate key issues
         SESSION.commit()
-        global CHAT_BLACKLISTS
         if CHAT_BLACKLISTS.get(str(chat_id), set()) == set():
             CHAT_BLACKLISTS[str(chat_id)] = {(trigger, action)}
         else:
             CHAT_BLACKLISTS.get(str(chat_id), set()).add((trigger, action))
+        return True
 
 
 def rm_from_blacklist(chat_id, trigger):

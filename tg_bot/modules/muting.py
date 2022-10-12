@@ -149,10 +149,8 @@ def mute(update: Update, context: CallbackContext) -> str:
 def button(update: Update, context: CallbackContext) -> str:
     query: Optional[CallbackQuery] = update.callback_query
     user: Optional[User] = update.effective_user
-    chat = update.effective_chat
-    admeme = chat.get_member(user.id)
     match = re.match(r"cb_unmute\((.+?)\)", query.data)
-    if match and admeme.status == "administrator":
+    if match and user_is_admin(update, user.id, perm=AdminPerms.CAN_RESTRICT_MEMBERS):
 
         bot = context.bot
         user_id = match.group(1)
@@ -171,7 +169,7 @@ def button(update: Update, context: CallbackContext) -> str:
                 and user_member.can_send_other_messages
                 and user_member.can_add_web_page_previews
             ):
-            update.effective_message.edit_tex("This user already has the right to speak.")
+            update.effective_message.edit_text("This user already has the right to speak.")
         else:
             chat_permissions = ChatPermissions(
                 can_send_messages=True,
@@ -188,7 +186,6 @@ def button(update: Update, context: CallbackContext) -> str:
             except BadRequest:
                 pass
 
-
             update.effective_message.edit_text(
                 "{} was unmuted by {}.".format(mention_html(user_id, user_member.user.first_name), user.first_name),
                 parse_mode=ParseMode.HTML,
@@ -199,6 +196,8 @@ def button(update: Update, context: CallbackContext) -> str:
                 f"<b>Admin:</b> {mention_html(user.id, user.first_name)}\n"
                 f"<b>User:</b> {mention_html(user_member.user.id, user_member.user.first_name)}"
             )
+    else:
+        query.answer("this is only for admins")
 
 
 @kigcmd(command='unmute')
