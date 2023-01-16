@@ -130,6 +130,9 @@ bans_help: |
     - /tban <userhandle> x(m/h/d): bans a user for x time. (via handle, or reply). m = minutes, h = hours, d = days.
     - /unban <userhandle>: unbans a user. (via handle, or reply)
     - /kick <userhandle>: kick a user out of the group, (via handle, or reply)
+    - /dkick <userhandle>: kick a user out of the group, silently.
+    - /skick <userhandle>: kick a user out of the group, deleting the replied to message.
+    - /dskick <userhandle>: kick a user out of the group deleting the sent and replied to message.
 
 blacklist_help: |
     Blacklists are used to stop certain triggers from being said in a group. Any time the trigger is mentioned, the message will immediately be deleted. A good combo is sometimes to pair this up with warn filters!
@@ -452,6 +455,9 @@ misc_help: |
 muting_help: |
       *Admins only:*
        • `/mute <userhandle>`*:* silences a user. Can also be used as a reply, muting the replied to user.
+       • `/dmute <userhandle>`*:* silences a user. silently.
+       • `/smute <userhandle>`*:* silences a user. deleting the replied to message.
+       • `/dsmute <userhandle>`*:* silences a user. deleting the sent and replied to message.
        • `/tmute <userhandle> x(m/h/d)`*:* mutes a user for x time. (via handle, or reply). `m` = `minutes`, `h` = `hours`, `d` = `days`.
        • `/unmute <userhandle>`*:* unmutes a user. Can also be used as a reply, muting the replied to user.
 

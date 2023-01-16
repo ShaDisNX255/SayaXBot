@@ -62,6 +62,7 @@ from .helper_funcs.admin_status import (
     AdminPerms,
     bot_is_admin,
     user_is_admin,
+    u_na_errmsg,
 )
 
 
@@ -371,7 +372,7 @@ def temp_ban(update: Update, context: CallbackContext) -> str:
     return log_message
 
 
-@kigcmd(command=['kick', 'punch'], pass_args=True)
+@kigcmd(command=['kick', 'skick', 'dkick', 'dskick', 'punch'], pass_args=True)
 @spamcheck
 @connection_status
 @bot_admin_check(AdminPerms.CAN_RESTRICT_MEMBERS)
@@ -383,8 +384,9 @@ def kick(update: Update, context: CallbackContext) -> str:
     message = update.effective_message
     log_message = ""
     bot, args = context.bot, context.args
-
-    if message.reply_to_message.sender_chat:
+    silent = message.text[1] == 's' or message.text[2] == 's'
+    delete = message.text[1] == 'd'
+    if message.reply_to_message and message.reply_to_message.sender_chat:
         message.reply_text("This command doesn't work on channels, but I can ban them if u want.")
         return log_message
 
@@ -412,24 +414,34 @@ def kick(update: Update, context: CallbackContext) -> str:
         message.reply_text("This user has immunity and cannot be banned.")
         return ''
 
-    if chat.unban_member(user_id):
-        bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
-
-        if reason:
-
-            bot.sendMessage(
-                chat.id,
-                f"{mention_html(member.user.id, member.user.first_name)} was kicked by {mention_html(user.id, user.first_name)} in {message.chat.title}\n<b>Reason</b>: <code>{reason}</code>",
-                parse_mode=ParseMode.HTML,
-            )
-
+    if delete and message.reply_to_message:
+        if user_is_admin(update, message.from_user.id, perm=AdminPerms.CAN_DELETE_MESSAGES):
+            if bot_is_admin(chat, AdminPerms.CAN_DELETE_MESSAGES):
+                message.reply_to_message.delete()
+            else:
+                update.effective_message.reply_text(
+                    f"I can't perform this action due to missing permissions;\n"
+                    f"Make sure i am an admin and {AdminPerms.CAN_DELETE_MESSAGES.name.lower().replace('is_', 'am ').replace('_', ' ')}!")
+                return
         else:
+            return u_na_errmsg(message, AdminPerms.CAN_DELETE_MESSAGES)
 
-            bot.sendMessage(
-                chat.id,
-                f"{mention_html(member.user.id, member.user.first_name)} was kicked by {mention_html(user.id, user.first_name)} in {message.chat.title}",
-                parse_mode=ParseMode.HTML,
-            )
+
+    if chat.unban_member(user_id):
+        if not silent:
+            bot.send_sticker(chat.id, BAN_STICKER)  # banhammer marie sticker
+            if reason:
+                bot.sendMessage(
+                    chat.id,
+                    f"{mention_html(member.user.id, member.user.first_name)} was kicked by {mention_html(user.id, user.first_name)} in {message.chat.title}\n<b>Reason</b>: <code>{reason}</code>",
+                    parse_mode=ParseMode.HTML,
+                )
+            else:
+                bot.sendMessage(
+                    chat.id,
+                    f"{mention_html(member.user.id, member.user.first_name)} was kicked by {mention_html(user.id, user.first_name)} in {message.chat.title}",
+                    parse_mode=ParseMode.HTML,
+                )
 
         log = (
             f"<b>{html.escape(chat.title)}:</b>\n"

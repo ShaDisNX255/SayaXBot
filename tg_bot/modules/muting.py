@@ -35,6 +35,7 @@ from .helper_funcs.admin_status import (
     bot_is_admin,
     user_is_admin,
     user_not_admin_check,
+    u_na_errmsg,
 )
 
 
@@ -71,7 +72,7 @@ def check_user(user_id: int, bot: Bot, update: Update) -> Optional[str]:
     return None
 
 
-@kigcmd(command='mute')
+@kigcmd(command=['mute', 'smute', 'dmute', 'dsmute'])
 @spamcheck
 @connection_status
 @bot_admin_check(AdminPerms.CAN_RESTRICT_MEMBERS)
@@ -85,13 +86,26 @@ def mute(update: Update, context: CallbackContext) -> str:
     user = update.effective_user
     message = update.effective_message
     user = update.effective_user
-
+    silent = message.text[1] == 's' or message.text[2] == 's'
+    delete = message.text[1] == 'd'
     user_id, reason = extract_user_and_text(message, args)
     reply = check_user(user_id, bot, update)
 
     if reply:
         message.reply_text(reply)
         return ""
+
+    if delete and message.reply_to_message:
+        if user_is_admin(update, message.from_user.id, perm=AdminPerms.CAN_DELETE_MESSAGES):
+            if bot_is_admin(chat, AdminPerms.CAN_DELETE_MESSAGES):
+                message.reply_to_message.delete()
+            else:
+                update.effective_message.reply_text(
+                    f"I can't perform this action due to missing permissions;\n"
+                    f"Make sure i am an admin and {AdminPerms.CAN_DELETE_MESSAGES.name.lower().replace('is_', 'am ').replace('_', ' ')}!")
+                return
+        else:
+            return u_na_errmsg(message, AdminPerms.CAN_DELETE_MESSAGES)
 
     member = chat.get_member(user_id)
 
@@ -124,8 +138,8 @@ def mute(update: Update, context: CallbackContext) -> str:
                 ]
             ]
         )
-
-        context.bot.send_message(
+        if not silent:
+            context.bot.send_message(
             chat.id,
             mutemsg,
             parse_mode=ParseMode.HTML,

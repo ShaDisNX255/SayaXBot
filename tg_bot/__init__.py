@@ -5,11 +5,10 @@ import time
 from typing import List
 import spamwatch
 import telegram.ext as tg
-from telegram.ext import Dispatcher, Updater
+from telegram.ext import Dispatcher, JobQueue, Updater
 from telethon import TelegramClient
 from telethon.sessions import MemorySession
 from configparser import ConfigParser
-from ptbcontrib.postgres_persistence import PostgresPersistence
 from functools import wraps
 from SibylSystem import PsychoPass
 try:
@@ -45,8 +44,6 @@ debug_handler.setLevel(logging.DEBUG)
 
 logging.basicConfig(handlers = [file_handler, stream_handler, debug_handler], level = logging.DEBUG)
 log = logging.getLogger('[Enterprise]')
-
-logging.getLogger('ptbcontrib.postgres_persistence.postgrespersistence').setLevel(logging.WARNING)
 
 log.info("LOGGER is starting. | Project maintained by: github.com/itsLuuke (t.me/itsLuuke)")
 
@@ -132,9 +129,6 @@ class KigyoINIT:
         self.BACKUP_PASS =  self.parser.get("BACKUP_PASS", None)
         self.SIBYL_KEY =  self.parser.get("SIBYL_KEY", None)
         self.SIBYL_ENDPOINT = self.parser.get("SIBYL_ENDPOINT", "https://psychopass.kaizoku.cyou")
-
-
-
 
 
     def init_sw(self):
@@ -234,15 +228,11 @@ sw = KInit.init_sw()
 
 from tg_bot.modules.sql import SESSION
 
-if not KInit.DROP_UPDATES:
-    updater: Updater = tg.Updater(token=TOKEN, base_url=KInit.BOT_API_URL, base_file_url=KInit.BOT_API_FILE_URL, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10}, persistence=PostgresPersistence(session=SESSION))
-    
-else:
-    updater = tg.Updater(token=TOKEN, base_url=KInit.BOT_API_URL, base_file_url=KInit.BOT_API_FILE_URL, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10})
-    
+updater: Updater = tg.Updater(token=TOKEN, base_url=KInit.BOT_API_URL, base_file_url=KInit.BOT_API_FILE_URL, workers=min(32, os.cpu_count() + 4), request_kwargs={"read_timeout": 10, "connect_timeout": 10})
+
 telethn = TelegramClient(MemorySession(), APP_ID, API_HASH)
 dispatcher: Dispatcher = updater.dispatcher
-j: Updater.job_queue = updater.job_queue
+j: JobQueue = updater.job_queue
 
 
 

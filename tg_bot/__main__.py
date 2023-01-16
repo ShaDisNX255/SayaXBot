@@ -680,29 +680,24 @@ def migrate_chats(update: Update, _: CallbackContext):
 def main():
     dispatcher.add_error_handler(error_callback)
     # dispatcher.add_error_handler(error_handler)
+    allowed_updates = ['message', 'edited_message', 'callback_query', 'callback_query', 'my_chat_member',
+                        'chat_member', 'chat_join_request', 'channel_post', 'edited_channel_post', 'inline_query']
 
     if WEBHOOK:
         log.info("Using webhooks.")
-        updater.start_webhook(listen="127.0.0.1", port=PORT, url_path=TOKEN)
+        updater.start_webhook(listen="0.0.0.0", port=PORT, url_path=TOKEN, allowed_updates=allowed_updates, webhook_url=URL+TOKEN, drop_pending_updates=KInit.DROP_UPDATES, cert=CERT_PATH if CERT_PATH else None)
 
-        if CERT_PATH:
-            updater.bot.set_webhook(url=URL + TOKEN, certificate=open(CERT_PATH, "rb"))
-        else:
-            updater.bot.set_webhook(url=URL + TOKEN)
+        print(f"Updater started! Using webhooks. | BOT: [@{dispatcher.bot.username}]")
 
     else:
-        dispatcher.bot.sendMessage(OWNER_ID, "Master, I'm awake!")
-        # if SUPPORT_GROUP:
-            # dispatcher.bot.sendMessage(SUPPORT_GROUP, "I'm up!")
         KigyoINIT.bot_id = dispatcher.bot.id
         KigyoINIT.bot_username = dispatcher.bot.username
         KigyoINIT.bot_name = dispatcher.bot.first_name
 
-        allowed_updates = ['message', 'edited_message', 'callback_query', 'callback_query', 'my_chat_member',
-                           'chat_member', 'chat_join_request', 'channel_post', 'edited_channel_post', 'inline_query']
         updater.start_polling(
                 timeout=15, read_latency=4, allowed_updates=allowed_updates, drop_pending_updates=KInit.DROP_UPDATES)
         print(f"Updater started! Using long polling. | BOT: [@{dispatcher.bot.username}]")
+    dispatcher.bot.sendMessage(OWNER_ID, "Master, I'm awake!")
     telethn.run_until_disconnected()
     updater.idle()
 
